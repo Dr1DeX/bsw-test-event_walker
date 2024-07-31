@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "bsw-test-event-walker"
+version = "0.1.0"
+description = ""
+authors = ["nesterov-art <nesterov-art@yandex-team.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.111.1"
+alembic = "^1.13.2"
+aio-pika = "^9.4.2"
+psycopg2-binary = "^2.9.9"
+asyncpg = "^0.29.0"
+sqlalchemy = "^2.0.31"
+pydantic = "^2.8.2"
+pydantic-settings = "^2.4.0"
+uvicorn = "^0.30.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
