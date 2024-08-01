@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class EventSchema(BaseModel):
+    event_id: str
     ratio: float
     deadline: float
     status: str
@@ -12,7 +13,7 @@ class EventSchema(BaseModel):
         from_attributes = True
 
 
-class EventUpdatedSchema(BaseModel):
+class EventCreateSchema(BaseModel):
     ratio: Optional[float] = None
     deadline: Optional[float] = None
     status: Optional[str] = None

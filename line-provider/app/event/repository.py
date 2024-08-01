@@ -4,7 +4,7 @@ import uuid
 from dataclasses import dataclass
 from redis import asyncio as redis
 from app.event.exception import EventNotFoundException
-from app.event.schema import EventSchema, EventUpdatedSchema
+from app.event.schema import EventSchema, EventCreateSchema
 
 
 @dataclass
@@ -29,7 +29,7 @@ class EventRepository:
             else:
                 raise EventNotFoundException
 
-    async def update_event(self, event_id, update_data: EventUpdatedSchema) -> EventSchema:
+    async def update_event(self, event_id, update_data: EventCreateSchema) -> EventSchema:
         async with self.redis_connection as redis:
             event_data = await redis.get(event_id)
             if event_data:
@@ -39,3 +39,4 @@ class EventRepository:
                 return updated_event
             else:
                 raise EventNotFoundException
+
