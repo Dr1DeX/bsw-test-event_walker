@@ -2,8 +2,8 @@ install:
 	@echo 'Installing dependency...'
 	poetry add ${LIB}
 
-migrate-create:
-	alembic revision --autogenerate -m ${MIGRATION}
+remove:
+	poetry remove ${LIB}
 
-migrate-apply:
-	alembic upgrade head
+run:
+	poetry run uvicorn app.main:app --host localhost --port 8000 --reload
