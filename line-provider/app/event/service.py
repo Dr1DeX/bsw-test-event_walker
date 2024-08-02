@@ -14,11 +14,11 @@ class EventService:
     event_repository: EventRepository
 
     @handle_raisers
-    async def create_event(self, event: EventSchema) -> EventSchema:
+    async def create_event(self, event: EventCreateSchema) -> EventSchema:
         event_id = await self.event_repository.create_event(event=event)
         event = await self.event_repository.get_event(event_id=event_id)
 
-        await publish_event_to_queue(queue_name='event_queue', message=json.dumps(event))
+        await publish_event_to_queue(queue_name='bet_queue', message=event)
 
         return event
 
@@ -26,7 +26,7 @@ class EventService:
     async def update_event(self, event_id: str, update_data: EventCreateSchema) -> EventSchema:
         event = await self.event_repository.update_event(event_id=event_id, update_data=update_data)
 
-        await publish_event_to_queue(queue_name='event_queue', message=json.dumps(event))
+        await publish_event_to_queue(queue_name='bet_queue', message=event)
 
         return event
 
@@ -42,7 +42,7 @@ class EventService:
             event_body = EventMessageBody(**json.loads(message.body.decode()))
             if event_body.action == 'get_event':
                 event = await self.get_event(event_id=event_body.event_id)
-                await publish_event_to_queue(queue_name='event_queue', message=json.dumps(event))
+                await publish_event_to_queue(queue_name='bet_queue', message=event)
             if event_body.action == 'get_events':
                 events = await self.get_events()
-                await publish_event_to_queue(queue_name='event_queue', message=json.dumps(events))
+                await publish_event_to_queue(queue_name='bet_queue', message=events)

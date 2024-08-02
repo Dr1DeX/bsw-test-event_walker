@@ -14,7 +14,7 @@ router = APIRouter(prefix='/event', tags=['event'])
     response_model=EventSchema
 )
 async def create_event(
-        event: EventSchema,
+        event: EventCreateSchema,
         event_service: Annotated[EventService, Depends(get_event_service)]
 ):
     return await event_service.create_event(event=event)
