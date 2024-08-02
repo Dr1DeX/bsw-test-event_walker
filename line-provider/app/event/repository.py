@@ -11,11 +11,15 @@ from app.event.schema import EventSchema, EventCreateSchema
 class EventRepository:
     redis_connection: redis
 
-    async def create_event(self, event: EventSchema) -> str:
-        key = f'{uuid.uuid4()}'
-        value = event.json()
-        async with self.redis_connection as redis_conn:
-            await redis_conn.set(key, value)
+    async def create_event(self, event: EventCreateSchema) -> str:
+        event_schema = EventSchema(
+            event_id=str(uuid.uuid4()),
+            **event.dict(exclude_none=True)
+        )
+        key = event_schema.event_id
+
+        async with self.redis_connection as redis:
+            await redis.set(key, event_schema.model_dump_json())
         return key
 
     async def get_event(self, event_id: str) -> EventSchema:

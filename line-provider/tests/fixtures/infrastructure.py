@@ -14,9 +14,8 @@ settings = Settings()
 async def init_db(event_loop, get_redis_connection):
     async with get_redis_connection as conn:
         events = [mock_events() for _ in range(5)]
-        event_dicts = [event.dict() for event in events]
-        event_json = json.dumps(event_dicts)
-        await conn.lpush('events', event_json)
+        for event in events:
+            await conn.set(event.event_id, event.json())
     yield
 
 
