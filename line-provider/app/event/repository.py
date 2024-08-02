@@ -40,3 +40,11 @@ class EventRepository:
             else:
                 raise EventNotFoundException
 
+    async def get_events(self) -> list[EventSchema]:
+        async with self.redis_connection as redis:
+            keys = await redis.keys('*')
+            if keys:
+                event_data = await redis.mget(keys)
+                events = [EventSchema.model_validate(json.loads(data)) for data in event_data]
+                return events
+            return []

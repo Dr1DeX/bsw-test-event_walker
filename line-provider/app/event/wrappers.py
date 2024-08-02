@@ -4,8 +4,8 @@ from functools import wraps
 from app.event.exception import EventNotFoundException
 
 
-def not_found_handle(func):
-    """Checker-Wrapper: raise HTTPException 404 status  to undefined event"""
+def handle_raisers(func):
+    """Checker-Wrapper: raiser HTTPException to events"""
 
     @wraps(func)
     async def wrapper(*args, **kwargs):
