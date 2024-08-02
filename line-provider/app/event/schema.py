@@ -17,3 +17,8 @@ class EventCreateSchema(BaseModel):
     ratio: Optional[float] = None
     deadline: Optional[float] = None
     status: Optional[str] = None
+
+
+class EventMessageBody(BaseModel):
+    event_id: str
+    action: str
