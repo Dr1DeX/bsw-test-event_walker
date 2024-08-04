@@ -28,6 +28,9 @@ jobs:
     - name: Test with flake8 bet-maker
       run: |
         poetry run flake8 bet-maker/
+
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
     - name: Up Testing stand
       run: |
         docker-compose up -d --build
