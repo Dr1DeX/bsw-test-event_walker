@@ -1,0 +1,33 @@
+name: CI for service Smeshnavka
+
+on:
+  push:
+    branches:
+      - '**'
+      - main
+
+jobs:
+  tests:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.12'
+        architecture: 'x64'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install poetry
+        poetry install
+        poetry add --dev flake8  # Добавьте эту строку для установки flake8 через Poetry
+    - name: Test with flake8
+      run: |
+        poetry run flake8 app/  # Запуск flake8 через Poetry
+    - name: Tests line-provider
+      run: |
+        poetry run pytest line-provider/tests
+    - name: Tests bet-maker
+      run: |
+        poetry run pytest bet-maker/tests    
