@@ -1,44 +1,59 @@
 import json
+import aio_pika
+
 from dataclasses import dataclass
 
-import aio_pika.abc
-
 from app.bets.repository.bet import BetsRepository
-from app.bets.schema import EventsSchema, EventActionsSchema
-from app.infrastructure.broker import get_broker_connection
+from app.bets.schema import EventsSchema, EventActionsSchema, BetsCreateSchema, BetsSchema
+from app.utils import callback_eventer
 
 
 @dataclass
 class BetsService:
     bets_repository: BetsRepository
 
-    async def consume_event(self, message: aio_pika.abc.AbstractIncomingMessage):
-        async with message.process():
-            event_body = json.loads(message.body.decode())
-            print(event_body)
+    async def consume_event(self, msg: aio_pika.abc.AbstractIncomingMessage):
+        async with msg.process():
+            event_body = json.loads(msg.body.decode())
+            action = event_body.get('action')
+            data = event_body.get('data')
 
-            # if action_message.action == 'get_events':
-            #     events = await self.get_events()
-            #     await publish_event_to_queue(queue_name=message.reply_to, message=[event.dict() for event in events])
+            if action == 'update_status_event':
+                await self.bets_repository.update_bet(event=data)
 
-    async def get_events(self) -> list[EventsSchema]:
-        connection = await get_broker_connection()
-        channel = await connection.channel()
-
-        response_queue = await channel.declare_queue(name='all_events_queue', durable=True)
-
+    @staticmethod
+    async def get_events() -> list[EventsSchema]:
         action_message = EventActionsSchema(event_id='', action='get_events')
-
-        await channel.default_exchange.publish(
-            aio_pika.Message(
-                body=json.dumps(action_message.dict()).encode(),
-                reply_to=response_queue.name
-            ),
-            routing_key='event_queue'
-        )
-
-        incoming_message = await response_queue.get(timeout=30)
-        event_data = json.loads(incoming_message.body.decode())
-        events = [EventsSchema(**event) for event in event_data]
+        events = await callback_eventer(action_message=action_message)
 
         return events
+
+    @staticmethod
+    async def get_event(event_id: str) -> EventsSchema:
+        action_message = EventActionsSchema(event_id=event_id, action='get_event')
+        event = await callback_eventer(action_message=action_message)
+        return event
+
+    async def get_bet(self, event_id: str) -> BetsSchema:
+        bet = await self.bets_repository.get_bet(event_id=event_id)
+        return BetsSchema.model_validate(bet)
+
+    async def get_bets(self) -> list[BetsSchema]:
+        bets = await self.bets_repository.get_bets()
+        bets_schema = [BetsSchema.model_validate(bet) for bet in bets]
+        return bets_schema
+
+    async def create_bet(self, bet: BetsCreateSchema) -> BetsSchema:
+        action_message = EventActionsSchema(event_id=bet.event_id, action='subscribe_event')
+        subscribe_eventer = await callback_eventer(action_message=action_message)
+
+        event_id = await self.bets_repository.create_bet(bet=bet, status=subscribe_eventer.status)
+        created_event = await self.bets_repository.get_bet(event_id=event_id)
+
+        bets_schema = BetsSchema(
+            event_id=created_event.event_id,
+            sum_bet=created_event.sum_bet,
+            status=created_event.status
+        )
+
+        return bets_schema

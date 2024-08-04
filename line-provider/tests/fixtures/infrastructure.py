@@ -1,5 +1,3 @@
-import json
-
 import pytest_asyncio
 
 from redis import asyncio as redis
