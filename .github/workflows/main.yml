@@ -10,7 +10,7 @@ jobs:
   tests:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
@@ -36,9 +36,14 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - name: Up Testing stand
-      run: |
-        docker-compose up -d --build
+
+
+    - name: Run docker-compose
+      uses: hoverkraft-tech/compose-action@v2.0.1
+      with:
+          compose-file: "docker-compose.yml"
+
+
     - name: Tests line-provider
       run: |
         poetry run pytest line-provider/tests
