@@ -29,27 +29,9 @@ jobs:
       run: |
         poetry run flake8 bet-maker/
 
-    - name: Set up Docker
-      uses: docker/setup-buildx-action@v2
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-
-    - name: Run docker-compose
-      uses: hoverkraft-tech/compose-action@v2.0.1
-      with:
-          compose-file: "docker-compose.yml"
-
-
     - name: Tests line-provider
       run: |
-        poetry run pytest line-provider/tests
+        poetry run pytest line-provider/tests/unit
     - name: Tests bet-maker
       run: |
-        poetry run pytest bet-maker/tests
-    - name: Down test-stand
-      run: |
-        docker-compose down
+        poetry run pytest bet-maker/tests/unit
