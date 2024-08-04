@@ -28,10 +28,8 @@ class EventRepository:
             event_data = await conn.get(event_id)
             if event_data:
                 event_schema = EventSchema.model_validate(json.loads(event_data))
-                now_time = datetime.datetime.now().timestamp()
                 print('call get_event')
-                if event_schema.deadline >= now_time:
-                    return event_schema
+                return event_schema
             else:
                 raise EventNotFoundException
 
