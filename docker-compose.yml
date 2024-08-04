@@ -1,8 +1,68 @@
 version: '3'
 services:
-  cache:
+  event-storage:
     image: redis:7.2.4-alpine
     restart: always
-    hostname: cache
+    hostname: event-storage
     ports:
       - '6379:6379'
+
+  broker:
+    image: rabbitmq:3-management
+    restart: always
+    shm_size: 128mb
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
+  db:
+    image: postgres:16.2-alpine
+    restart: always
+    hostname: bet-maker
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bet-maker
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - bet-maker:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  line-provider:
+    build:
+      context: .
+      dockerfile: line-provider/provider.Dockerfile
+    hostname: line-provider
+    command: bash -c "poetry install && poetry run uvicorn app.main:app --host 0.0.0.0 --port 8001"
+    restart: always
+    shm_size: 128mb
+    ports:
+      - '8001:8001'
+    depends_on:
+      - broker
+      - event-storage
+    env_file:
+      - .env.provider
+
+  bet-maker:
+    build:
+      context: .
+      dockerfile: bet-maker/bet.Dockerfile
+    command: bash -c "poetry run alembic upgrade head && poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    hostname: bet-maker
+    restart: always
+    shm_size: 128mb
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+      - broker
+    env_file:
+      - .env.bet
+
+
+
+volumes:
+  bet-maker:
+    driver: local
