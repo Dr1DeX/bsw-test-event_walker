@@ -1,4 +1,3 @@
-import uuid
 from typing import Optional
 
 from pydantic import BaseModel
@@ -15,6 +14,11 @@ class EventCreateSchema(BaseModel):
     ratio: Optional[float] = None
     deadline: Optional[float] = None
     status: Optional[str] = None
+
+
+class EventUpdatedStatusSchema(BaseModel):
+    event_id: str
+    status: str
 
 
 class EventMessageBody(BaseModel):

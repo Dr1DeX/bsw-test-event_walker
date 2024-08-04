@@ -1,0 +1,8 @@
+version: '3'
+services:
+  cache:
+    image: redis:7.2.4-alpine
+    restart: always
+    hostname: cache
+    ports:
+      - '6379:6379'

@@ -14,6 +14,12 @@ services:
     ports:
       - '5432:5432'
 
+  storage-test:
+    image: redis:7.2.4-alpine
+    restart: always
+    ports:
+      - '6377:6379'
+
 
 
 volumes:
