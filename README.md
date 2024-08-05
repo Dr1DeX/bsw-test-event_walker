@@ -1,3 +1,4 @@
+![CI status for Bet-Maker](https://github.com/Dr1DeX/bsw-test-event_walker/actions/workflows/main.yml/badge.svg)
 # bsw-test-event_walker
 Тестовое задание. Event Walker
 
@@ -143,7 +144,13 @@ ___
 
 ___
 ## Тесты
-### Unit и integration уже включены в основную CI систему, для его запуска следует запустить github workflows
+### Для запуска тестов нужно поднять тестовую инфраструктуру - это можно сделать с помощью команды `docker-compose up -d`, после чего будут доступны `unit` и `integration` тесты
+### Команды запуска тестов:
+### *line-provider*
+`pytest line-provider/tests`
+
+### *bet-maker*
+`pytest bet-maker/tests`
 
 ___
 
