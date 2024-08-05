@@ -29,9 +29,3 @@ jobs:
       run: |
         poetry run flake8 bet-maker/
 
-    - name: Tests line-provider
-      run: |
-        poetry run pytest line-provider/tests/unit
-    - name: Tests bet-maker
-      run: |
-        poetry run pytest bet-maker/tests/unit

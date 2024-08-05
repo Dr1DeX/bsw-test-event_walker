@@ -48,7 +48,7 @@ services:
   bet-maker:
     build:
       context: .
-      dockerfile: bet-maker/bet.Dockerfile
+      dockerfile: ./bet-maker/bet.Dockerfile
     command: bash -c "poetry run alembic upgrade head && poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000"
     hostname: bet-maker
     restart: always
@@ -60,7 +60,6 @@ services:
       - broker
     env_file:
       - .env.bet
-
 
 
 volumes:
