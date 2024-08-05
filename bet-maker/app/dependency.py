@@ -11,5 +11,5 @@ async def get_bets_repository(
 async def get_bets_service(
 ) -> BetsService:
     return BetsService(
-        bets_repository=await get_bets_repository(),  # Depends не будет дергаться при update_eventer
+        bets_repository=await get_bets_repository(),  # Depends не дергатеться
     )

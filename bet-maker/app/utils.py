@@ -8,11 +8,18 @@ from app.bets.schema import EventActionsSchema, EventsSchema
 from app.infrastructure.broker import get_broker_connection
 
 
-async def callback_eventer(action_message: EventActionsSchema) -> Union[list[EventsSchema], EventsSchema]:
+async def callback_eventer(
+        action_message: EventActionsSchema
+) -> Union[list[EventsSchema], EventsSchema]:
+
     connection = await get_broker_connection()
     channel = await connection.channel()
 
-    response_queue = await channel.declare_queue('', exclusive=True, timeout=10)
+    response_queue = await channel.declare_queue(
+        '',
+        exclusive=True,
+        timeout=10
+    )
 
     correlation_id = str(uuid.uuid4())
     await channel.default_exchange.publish(

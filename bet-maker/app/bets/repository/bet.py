@@ -43,4 +43,3 @@ class BetsRepository:
         async with self.db_session as session:
             await session.execute(query)
             await session.commit()
-

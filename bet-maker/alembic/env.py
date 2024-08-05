@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.infrastructure.database import Base
 from app.settings import Settings
-from app.bets.models import Bets
+import app.bets.models
 
 config = context.config
 
