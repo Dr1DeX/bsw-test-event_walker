@@ -1,6 +1,5 @@
 ![CI status for Bet-Maker](https://github.com/Dr1DeX/bsw-test-event_walker/actions/workflows/main.yml/badge.svg)
-# bsw-test-event_walker
-Тестовое задание. Event Walker
+# Тестовое задание. Event Walker
 
 ## Задача: Разработать два независимых сервиса line-provider и bet-maker, которые будут обмениваться между собой событиями
 
